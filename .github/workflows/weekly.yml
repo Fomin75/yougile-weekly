@@ -1,0 +1,25 @@
+
+name: Create YouGile weekly board
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 6 * * 6'
+      timezone: 'Europe/Moscow'
+
+jobs:
+  create-board:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Create weekly board
+        env:
+          YOUGILE_API_KEY: ${{ secrets.YOUGILE_API_KEY }}
+        run: python weekly_board.py
