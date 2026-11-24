@@ -3,7 +3,9 @@ from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
 BASE = 'https://yougile.com/api-v2'
-KEY = os.environ['YOUGILE_API_KEY']
+KEY = os.environ['YOUGILE_API_KEY'].strip()
+if '\n' in KEY or '\r' in KEY:
+    raise ValueError('YOUGILE_API_KEY содержит перенос строки. Исправьте GitHub Secret.')
 PROJECT = os.environ.get('YOUGILE_PROJECT_ID', '').strip()
 PROJECT_TITLE = os.environ.get('YOUGILE_PROJECT_TITLE', 'Текущая работа элеватора')
 
@@ -57,7 +59,8 @@ def main():
     names = ['Планы на неделю'] + [f'{day} {(monday + timedelta(days=i)):%d.%m}' for i, day in enumerate(
         ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница'])]
     existing = {c['title'] for c in all_items('/columns', boardId=board_id)}
-    for i, name in enumerate(names):
+    for i in reversed(range(len(names))):
+        name = names[i]
         if name in existing:
             continue
         api('POST', '/columns', {'title': name, 'boardId': board_id,
