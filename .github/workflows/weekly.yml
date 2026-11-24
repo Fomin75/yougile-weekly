@@ -19,12 +19,9 @@ jobs:
           python-version: '3.12'
 
       - name: Check Python script
-        run: |
-          pwd
-          ls -la
-          python -m py_compile weekly_board.py
+        run: python -m py_compile create_week.py
 
       - name: Create weekly board
         env:
           YOUGILE_API_KEY: ${{ secrets.YOUGILE_API_KEY }}
-        run: python weekly_board.py
+        run: python create_week.py
